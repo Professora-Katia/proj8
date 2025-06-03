@@ -1,0 +1,85 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f7fa;
+  padding: 30px;
+  text-align: center;
+
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #003366;
+}
+
+select,
+button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.servico {
+  margin-top: 30px;
+  text-align: left;
+  background: #eaf0f6;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.servico h3 {
+  color: #003366;
+  margin-bottom: 10px;
+}
+
+.entrada {
+  background: white;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-finalizar {
+  background-color: #dc3545;
+  color: white;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.logo-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 4px solid #003366;
+  background-color: #ffffff;
+  z-index: 10;
+}
+
+.logo-img {
+  max-height: 100px;
+  width: auto;
+  margin-left: 10px;
+}
+
+.logo-text {
+  font-size: 36px;
+  color: #003366;
+  font-weight: 700;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 1.5px;
+}

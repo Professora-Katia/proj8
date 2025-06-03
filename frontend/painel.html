@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Painel de Senhas</title>
+  <link rel="shortcut icon" href="img/ms.ico" type="image/x-icon">
+ <link rel="stylesheet" href="painel.css">
+</head>
+
+<body>
+  <header class="logo-header">
+    <img src="img/logo.png" alt="Logo Centro Comercial Alvarenga" class="logo-img">
+    <span class="logo-text">Centro Comercial Alvarenga</span>
+  </header>
+  <h2>Painel de Chamadas</h2>
+
+  <div class="painel">
+    <div class="coluna" id="col-hospital">
+      <div class="titulo">Hospital</div>
+    </div>
+    <div class="coluna" id="col-banco">
+      <div class="titulo">Banco</div>
+    </div>
+    <div class="coluna" id="col-restaurante">
+      <div class="titulo">Restaurante</div>
+    </div>
+  </div>
+
+  <script>
+    async function atualizarPainel(servico) {
+      const resp = await fetch(`http://localhost:5000/painel/${servico}`);
+      const { chamadas, espera, finalizadas } = await resp.json();
+
+      const col = document.getElementById(`col-${servico}`);
+      col.innerHTML = `<div class="titulo">${servico.charAt(0).toUpperCase() + servico.slice(1)}</div>`;
+
+      // Em atendimento
+      col.innerHTML += `<div class="subtitulo">🔵 Em Atendimento</div>`;
+      chamadas.forEach(item => {
+        col.innerHTML += `
+          <div class="entrada">
+            <div class="senha">${item.senha}</div>
+            <div class="guiche">${servico === 'restaurante' ? 'Mesa' : 'Guichê'} ${item.guiche}</div>
+          </div>`;
+      });
+      if (chamadas.length === 0) {
+        col.innerHTML += `<div class="entrada">Nenhuma senha em atendimento</div>`;
+      }
+
+      // Em espera
+      col.innerHTML += `<div class="subtitulo">🟡 Em Espera</div>`;
+      espera.forEach(item => {
+        col.innerHTML += `
+          <div class="entrada">
+            <div class="senha">${item.senha}</div>
+          </div>`;
+      });
+      if (espera.length === 0) {
+        col.innerHTML += `<div class="entrada">Nenhuma senha em espera</div>`;
+      }
+
+      // Finalizadas
+      col.innerHTML += `<div class="subtitulo">🟢 Finalizadas</div>`;
+      finalizadas.forEach(item => {
+        col.innerHTML += `
+          <div class="entrada">
+            <div class="senha">${item.senha}</div>
+            <div class="guiche">${servico === 'restaurante' ? 'Mesa' : 'Guichê'} ${item.guiche}</div>
+          </div>`;
+      });
+      if (finalizadas.length === 0) {
+        col.innerHTML += `<div class="entrada">Nenhuma senha finalizada</div>`;
+      }
+    }
+
+    function atualizarTudo() {
+      atualizarPainel('hospital');
+      atualizarPainel('banco');
+      atualizarPainel('restaurante');
+    }
+
+    setInterval(atualizarTudo, 3000); // Atualiza a cada 3 segundos
+    atualizarTudo(); // Inicial
+  </script>
+</body>
+
+</html>

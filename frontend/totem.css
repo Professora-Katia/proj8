@@ -1,0 +1,130 @@
+
+    body {
+      margin: 0;
+      background: #f0f4f8;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding-top: 100px; 
+    }
+ header {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #003366;
+    }
+
+    header h2 {
+      margin: 0;
+      font-size: 28px;
+      color: #003366;
+      font-weight: bold;
+      letter-spacing: 1px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    }
+     .logo-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 4px solid #003366;
+  background-color: #ffffff;
+  z-index: 10;
+   margin-bottom: 40px;
+}
+
+.logo-img {
+  max-height: 100px;
+  width: auto;
+  margin-left: 10px;
+}
+
+.logo-text {
+  font-size: 36px;
+  color: #003366;
+  font-weight: 700;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 1.5px;
+}
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #003366;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 18px;
+      margin-bottom: 15px;
+      font-size: 20px;
+      background-color: #e0ecf8;
+      color: #003366;
+      border: 2px solid #003366;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #005ea6;
+      color: white;
+    }
+
+    .btn.selected {
+      background-color: #003366;
+      color: white;
+      font-weight: bold;
+    }
+
+    .confirmacao {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .confirmacao p {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #444;
+    }
+
+    .confirmacao .btn {
+      width: 45%;
+      margin: 5px;
+      display: inline-block;
+    }
+
+    .resultado {
+      margin-top: 25px;
+      padding: 15px;
+      background: #e6ffed;
+      border: 2px solid #28a745;
+      border-radius: 10px;
+      font-size: 18px;
+      color: #003366;
+    }
+
+    .resultado strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 8px;
+      color: #0055a5;
+    }
+
+   

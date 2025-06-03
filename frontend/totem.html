@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Totem de Senhas</title>
+  <link rel="shortcut icon" href="img/ms.ico" type="image/x-icon">
+  <link rel="stylesheet" href="totem.css">
+</head>
+<body>
+
+  <header class="logo-header">
+    <img src="img/logo.png" alt="Logo Centro Comercial Alvarenga" class="logo-img">
+    <span class="logo-text">Centro Comercial Alvarenga</span>
+  </header>
+
+  <div class="container">
+    <h1>Escolha o tipo de serviço</h1>
+
+    <button class="btn" id="btn-banco" onclick="selecionarServico('BAN', this)">Banco</button>
+    <button class="btn" id="btn-hospital" onclick="selecionarServico('HOS', this)">Hospital</button>
+    <button class="btn" id="btn-restaurante" onclick="selecionarServico('RES', this)">Restaurante</button>
+
+    <div class="confirmacao" id="confirmacao">
+      <p>Você deseja atendimento prioritário?</p>
+      <button class="btn" onclick="gerarSenha(true)">Sim</button>
+      <button class="btn" onclick="gerarSenha(false)">Não</button>
+    </div>
+
+    <div class="resultado" id="saida" style="display: none;"></div>
+  </div>
+
+  <script>
+    let servicoSelecionado = '';
+    let botaoSelecionado = null;
+
+    function selecionarServico(servico, botao) {
+      servicoSelecionado = servico;
+      botaoSelecionado = botao;
+
+      document.querySelectorAll('.btn').forEach(b => b.classList.remove('selected'));
+      botao.classList.add('selected');
+
+      document.getElementById('confirmacao').style.display = 'block';
+      document.getElementById('saida').style.display = 'none';
+    }
+
+    function gerarSenha(prioritario) {
+      const servico = getNomeServico(servicoSelecionado);
+
+      fetch('http://localhost:5000/nova_senha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ servico, prioritario })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.erro) {
+          alert(data.erro);
+          return;
+        }
+
+        const dataHora = new Date(data.horario);
+        const horarioFormatado = `${dataHora.toLocaleDateString('pt-BR')} - ${dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+
+        document.getElementById('saida').innerHTML = `
+          <strong>SENHA: ${data.senha}</strong>
+          ${servico.toUpperCase()}<br>
+          ${horarioFormatado}
+        `;
+        document.getElementById('saida').style.display = 'block';
+        document.getElementById('confirmacao').style.display = 'none';
+
+        setTimeout(() => {
+          servicoSelecionado = '';
+          if (botaoSelecionado) botaoSelecionado.classList.remove('selected');
+          botaoSelecionado = null;
+          document.getElementById('saida').style.display = 'none';
+        }, 5000);
+      });
+    }
+
+    function getNomeServico(codigo) {
+      switch (codigo) {
+        case 'BAN': return 'banco';
+        case 'HOS': return 'hospital';
+        case 'RES': return 'restaurante';
+        default: return '';
+      }
+    }
+  </script>
+
+</body>
+</html>

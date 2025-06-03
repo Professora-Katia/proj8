@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Estatístico - Simulação de Filas</title>
+  <link rel="stylesheet" href="estilo.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #003366;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .header p {
+      margin: 5px 0 0 0;
+      font-size: 16px;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 280px;
+    }
+
+    .card h2 {
+      color: #003366;
+      font-size: 20px;
+      margin-top: 0;
+    }
+
+    .card ul {
+      padding-left: 20px;
+    }
+
+    .importante {
+      background: #fff3cd;
+      margin: 0 auto;
+      padding: 30px 20px;
+      max-width: 800px;
+      border-top: 4px solid #ffc107;
+    }
+
+    .importante h2,
+    .importante h3 {
+      color: #856404;
+    }
+
+    .importante ul {
+      padding-left: 20px;
+    }
+
+    .importante em {
+      color: #212529;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="logo-header header">
+    <img src="img/logo.png" alt="Logo Centro Comercial Alvarenga" class="logo-img"
+      style="height: 40px; vertical-align: middle;">
+    <span class="logo-text" style="font-weight: bold; margin-left: 10px;">Centro Comercial Alvarenga</span>
+    <h1>Relatório Estatístico - Atendimento</h1>
+    <p>Disciplina: Estatística Aplicada</p>
+  </header>
+
+  <section class="card-container">
+
+    <div class="card" id="card-estatisticas">
+      <h2>Medidas Descritivas</h2>
+      <div id="estatisticas-content">Carregando...</div>
+    </div>
+
+ <div class="card">
+  <h2>Visualizações</h2>
+
+  <div style="margin-bottom: 10px;">
+    <label><input type="radio" name="servico" value="banco" onchange="exibirGraficos()" checked> Banco</label>
+    <label><input type="radio" name="servico" value="hospital" onchange="exibirGraficos()"> Hospital</label>
+    <label><input type="radio" name="servico" value="restaurante" onchange="exibirGraficos()"> Restaurante</label>
+  </div>
+
+  <div id="graficos-visualizacoes">
+    <p>Carregando gráficos...</p>
+  </div>
+</div>
+
+
+    <div class="card">
+      <h2>Distribuições</h2>
+      <ul>
+        <li>Ajuste Exponencial - chegadas</li>
+        <li>Poisson - nº de chegadas/hora</li>
+        <li>Testes visuais e estatísticos</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Intervalos de Confiança</h2>
+      <ul>
+        <li>Tempo médio de atendimento</li>
+        <li>Tempo médio de espera</li>
+      </ul>
+      <p>Interpretação frente ao modelo M/M/c</p>
+    </div>
+  </section>
+<script>
+  async function carregarEstatisticas() {
+    try {
+      const res = await fetch('http://localhost:5000/estatisticas_json');
+      const data = await res.json();
+
+      const section = document.getElementById('estatisticas-content');
+      section.innerHTML = '';
+
+      if (!data || typeof data !== 'object') {
+        section.innerHTML = 'ERRO: Dados inválidos';
+        return;
+      }
+
+      function segundosParaMinutos(valor) {
+        return (valor / 60).toFixed(2);
+      }
+
+      for (const tipo in data) {
+        if (data[tipo] && data[tipo].media !== undefined) {
+          const estat = data[tipo];
+          const titulo = tipo.replace(/_/g, ' ').toUpperCase();
+
+          section.innerHTML += `
+            <h3>${titulo}</h3>
+            <ul>
+              <li><strong>Média:</strong> ${segundosParaMinutos(estat.media)} min</li>
+              <li><strong>Mediana:</strong> ${segundosParaMinutos(estat.mediana)} min</li>
+              <li><strong>Moda:</strong> ${segundosParaMinutos(estat.moda)} min</li>
+              <li><strong>Desvio Padrão:</strong> ${segundosParaMinutos(estat.desvio_padrao)} min</li>
+            </ul>
+          `;
+        } else {
+          section.innerHTML += `<h3>${tipo}</h3><p>ERRO</p>`;
+        }
+      }
+    } catch (error) {
+      console.error("Erro no carregamento:", error);
+      document.getElementById('estatisticas-content').innerHTML = 'Erro ao carregar estatísticas.';
+    }
+  }
+
+  function gerarImagem(servico, tipo, legenda) {
+    const caminho = `http://localhost:5000/graficos/${servico}_${tipo}.png`;
+  return `
+    <div style="margin-bottom: 20px;">
+      <h4>${legenda}</h4>
+      <img src="${caminho}" alt="${legenda}" style="width: 100%; border-radius: 6px;">
+    </div>`;
+  }
+
+  function exibirGraficos() {
+    const servicoSelecionado = document.querySelector('input[name="servico"]:checked').value;
+    const container = document.getElementById('graficos-visualizacoes');
+    container.innerHTML = '';
+
+    const graficos = [
+      { tipo: 'tempo_atendimento_hist', legenda: 'Histograma - Tempo de Atendimento' },
+      { tipo: 'tempo_espera_hist', legenda: 'Histograma - Tempo de Espera' },
+      { tipo: 'tempo_sistema_hist', legenda: 'Histograma - Tempo no Sistema' },
+      { tipo: 'box_atendimento_espera', legenda: 'Boxplot - Atendimento vs Espera' },
+      { tipo: 'box_prioridade_espera', legenda: 'Boxplot - Espera por Prioridade' },
+      { tipo: 'linha_espera', legenda: 'Gráfico de Linha - Evolução da Espera' }
+    ];
+
+    graficos.forEach(g => {
+      container.innerHTML += gerarImagem(servicoSelecionado, g.tipo, g.legenda);
+    });
+  }
+
+  window.onload = () => {
+    fetch('http://localhost:5000/exportar_csv')
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao exportar CSV");
+        console.log("CSV exportado com sucesso");
+        return fetch('http://localhost:5000/gerar_graficos');
+      })
+
+     .then(res => {
+      if (!res.ok) throw new Error("Erro ao gerar gráficos");
+      console.log("Gráficos gerados com sucesso");
+      carregarEstatisticas();
+      exibirGraficos();
+    })
+    .catch(err => console.error(err));
+};
+</script>
+
+
+</body>
+
+</html>

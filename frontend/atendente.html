@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Atendimento por Serviço</title>
+  <link rel="shortcut icon" href="img/ms.ico" type="image/x-icon">
+  <link rel="stylesheet" href="atendente.css">
+</head>
+
+<body>
+  <header class="logo-header">
+    <img src="img/logo.png" alt="Logo Centro Comercial Alvarenga" class="logo-img">
+    <span class="logo-text">Centro Comercial Alvarenga</span>
+  </header>
+  <div class="container">
+    <h2>Início de Atendimento</h2>
+
+    <label>Tipo de Serviço:</label>
+    <select id="servico" onchange="atualizarOpcoes()">
+      <option value="banco">Banco</option>
+      <option value="hospital">Hospital</option>
+      <option value="restaurante">Restaurante</option>
+    </select>
+
+    <div id="opcao-atendente"></div>
+
+    <button onclick="chamarSenha()">Chamar próxima senha</button>
+
+    <div id="lista-atendimento"></div>
+    <h2 style="margin-top:40px;">Senhas em Espera</h2>
+    <div id="lista-espera"></div>
+
+  </div>
+
+  <script>
+    const TOTAL_GUICHES = 5;
+    const TOTAL_MESAS = 25;
+
+    function atualizarLista() {
+      const container = document.getElementById('lista-atendimento');
+      container.innerHTML = '';
+
+      fetch('http://localhost:5000/senhas_em_atendimento')
+        .then(res => res.json())
+        .then(lista => {
+          let agrupado = {};
+
+          lista.forEach(item => {
+            if (!agrupado[item.servico]) agrupado[item.servico] = [];
+            agrupado[item.servico].push(item);
+          });
+
+          for (const servico in agrupado) {
+            let bloco = `<div class="servico"><h3>${servico.toUpperCase()}</h3>`;
+
+            agrupado[servico].forEach(item => {
+              bloco += `
+            <div class="entrada">
+              <strong>SENHA:</strong> ${item.senha}<br>
+              <strong>${servico === 'restaurante' ? 'MESA' : 'GUICHÊ'}:</strong> ${item.guiche}<br>
+              <strong>HORÁRIO:</strong> ${item.horario}<br>
+              <button class="btn-finalizar" onclick="finalizarAtendimento('${servico}', '${item.senha}')">Finalizar atendimento</button>
+            </div>`;
+            });
+
+            bloco += `</div>`;
+            container.innerHTML += bloco;
+          }
+
+          if (lista.length === 0) {
+            container.innerHTML = `<div class="entrada">Nenhuma senha em atendimento.</div>`;
+          }
+        });
+    }
+
+
+    function chamarSenha() {
+      const servico = document.getElementById('servico').value;
+      const guiche = document.getElementById('guiche').value;
+
+      fetch('http://localhost:5000/chamar_senha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ servico, guiche })
+      })
+        .then(res => res.json())
+        .then(() => {
+          atualizarLista();
+          atualizarEspera();
+          atualizarOpcoes();
+        });
+    }
+
+    function finalizarAtendimento(servico, senha) {
+      fetch('http://localhost:5000/finalizar_atendimento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ servico, senha })
+      })
+        .then(res => res.json())
+        .then(() => {
+          atualizarLista();
+        });
+    }
+
+    function atualizarOpcoes() {
+      const servico = document.getElementById('servico').value;
+      const opcaoContainer = document.getElementById('opcao-atendente');
+      const total = servico === 'restaurante' ? TOTAL_MESAS : TOTAL_GUICHES;
+
+      fetch('http://localhost:5000/senhas_em_atendimento')
+        .then(res => res.json())
+        .then(lista => {
+          const ocupados = lista
+            .filter(item => item.servico === servico && item.guiche != null)
+            .map(item => parseInt(item.guiche));
+
+          let opcoes = '';
+          for (let i = 1; i <= total; i++) {
+            if (!ocupados.includes(i)) {
+              opcoes += `<option value="${i}">${servico === 'restaurante' ? 'Mesa' : 'Guichê'} ${i}</option>`;
+            }
+          }
+
+          let html = `<label>${servico === 'restaurante' ? 'Mesa' : 'Guichê'}:</label>`;
+
+          if (opcoes) {
+            html += `<select id="guiche">${opcoes}</select>`;
+          } else {
+            html += `<select id="guiche" disabled><option>Nenhum disponível</option></select>`;
+          }
+
+          opcaoContainer.innerHTML = html;
+        });
+    }
+
+    function atualizarEspera() {
+      const container = document.getElementById('lista-espera');
+      container.innerHTML = '';
+
+      fetch('http://localhost:5000/senhas_em_espera')
+        .then(res => res.json())
+        .then(lista => {
+          let agrupado = {};
+
+          lista.forEach(item => {
+            if (!agrupado[item.servico]) agrupado[item.servico] = [];
+            agrupado[item.servico].push(item);
+          });
+
+          for (const servico in agrupado) {
+            let bloco = `<div class="servico"><h3>${servico.toUpperCase()}</h3>`;
+
+            agrupado[servico].forEach(item => {
+              bloco += `
+            <div class="entrada">
+              <strong>SENHA:</strong> ${item.senha}<br>
+              <strong>HORÁRIO:</strong> ${item.horario}
+            </div>`;
+            });
+
+            bloco += `</div>`;
+            container.innerHTML += bloco;
+          }
+
+          if (lista.length === 0) {
+            container.innerHTML = `<div class="entrada">Nenhuma senha em espera.</div>`;
+          }
+        });
+    }
+
+
+    function atualizarLista() {
+      const container = document.getElementById('lista-atendimento');
+      container.innerHTML = '';
+
+      fetch('http://localhost:5000/senhas_em_atendimento')
+        .then(res => res.json())
+        .then(lista => {
+          let agrupado = {};
+
+          lista.forEach(item => {
+            if (!agrupado[item.servico]) agrupado[item.servico] = [];
+            agrupado[item.servico].push(item);
+          });
+
+          for (const servico in agrupado) {
+            let bloco = `<div class="servico"><h3>${servico.toUpperCase()}</h3>`;
+
+            agrupado[servico].forEach(item => {
+              bloco += `
+            <div class="entrada">
+              <strong>SENHA:</strong> ${item.senha}<br>
+              <strong>${servico === 'restaurante' ? 'MESA' : 'GUICHÊ'}:</strong> ${item.guiche}<br>
+              <strong>HORÁRIO:</strong> ${item.horario}<br>
+              <button class="btn-finalizar" onclick="finalizarAtendimento('${item.servico}', '${item.senha}')">Finalizar atendimento</button>
+            </div>`;
+            });
+
+            bloco += `</div>`;
+            container.innerHTML += bloco;
+          }
+
+          if (lista.length === 0) {
+            container.innerHTML = `<div class="entrada">Nenhuma senha em atendimento.</div>`;
+          }
+        });
+    }
+
+
+    window.onload = () => {
+      atualizarOpcoes();
+      atualizarLista();
+      atualizarEspera();
+      setInterval(atualizarEspera, 5000); 
+    };
+
+  </script>
+</body>
+
+</html>
