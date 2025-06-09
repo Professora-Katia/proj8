@@ -43,7 +43,7 @@ Este repositório apresenta um sistema integrado para simulação de atendimento
 
 ##  Diretrizes do Projeto
 
-Consulte o arquivo na PBL EC8 2025 02.pdf pasta _proposta.
+Consulte o arquivo "PBL_EC8_2025_02.pdf" na pasta _proposta.
 
 ---
 
