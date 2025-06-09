@@ -1,5 +1,5 @@
 
-# 📊 Simulador de Atendimento com Análise Estatística e Operacional
+# 📊 Simulador de Atendimento 
 
 Este repositório apresenta um sistema integrado para simulação de atendimento com geração de senhas, chamadas por atendentes, visualização em painel, e análise posterior com foco estatístico e operacional. O projeto é voltado para uso educacional, exposições e estudos em disciplinas como **Pesquisa Operacional**, **Estatística**, e **Desenvolvimento Web**.
 
