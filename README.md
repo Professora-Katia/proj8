@@ -19,7 +19,8 @@ Este repositório apresenta um sistema integrado para simulação de atendimento
 ## 📁 Estrutura do Projeto
 
 ```
-├── app.py              # Servidor Flask - geração de senhas e API
+├── Projeto            # Pasta com documentação técnica de apoio 
+├── app.py             # Servidor Flask - geração de senhas e API
 ├── appPO.py           # Página de análise de Pesquisa Operacional (Streamlit)
 ├── appS.py            # Página de análise Estatística (Streamlit)
 ├── starserver.py      # Script para iniciar Flask e ambas as páginas Streamlit
@@ -33,7 +34,18 @@ Este repositório apresenta um sistema integrado para simulação de atendimento
 ├── ms.ico             # Ícone do navegador (favicon)
 ├── dados.db           # Banco de dados SQLite com histórico dos atendimentos
 └── README.md          # Documentação do projeto
+└── Rede.jpg           # Guia para estruturação da rede do projeto
 ```
+
+---
+
+##  Diretrizes do Projeto
+
+A pasta Projeto contém documentos técnicos de apoio para:
+- Planejamento do Projeto
+- Acompanhamento do Projeto
+
+O arquivo Rede.jpg pode ajudá-lo no entendimento da arquitetura física da solução.
 
 ---
 
